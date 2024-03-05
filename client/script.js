@@ -1,42 +1,68 @@
-const SERVER_URL = 'http://localhost:8000';
-const chatBox = document.getElementById('chat-box');
-const userInput = document.getElementById('user-input');
+function askQuestion() {
+    const question = document.getElementById("question").value;
+    const chatContainer = document.getElementById("chat-container");
+    const loadingDiv = document.getElementById("loading");
+    const submitBtn = document.getElementById("submit-btn");
 
-function appendMessage(message, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
-    if (sender === 'user') {
-        messageElement.classList.add('user-message');
-    } else {
-        messageElement.classList.add('model-message');
-    }
-    messageElement.innerText = message;
-    chatBox.appendChild(messageElement);
-}
+    // Disable submit button
+    submitBtn.disabled = true;
 
-async function sendMessage() {
-    const userMessage = userInput.value.trim();
-    if (userMessage === '') return;
+    // Display user message in chat window
+    displayMessage(question, true);
 
-    appendMessage(userMessage, 'user');
-    userInput.value = '';
+    // Show loading spinner
+    loadingDiv.classList.remove("hidden");
 
-    const response = await fetch(`${SERVER_URL}/chat`, {
-        method: 'POST',
+    // Make POST request to server
+    fetch("http://localhost:8000/chat", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
-        body: JSON.stringify({ query: userMessage })
-    });
+        body: JSON.stringify({ prompt: question })
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Display bot message in chat window
+            displayMessage(data, false);
 
-    const responseData = await response.json();
-    const modelResponse = responseData.response;
-    appendMessage(modelResponse, 'model');
+            // Enable submit button
+            submitBtn.disabled = false;
+
+            // Hide loading spinner
+            loadingDiv.classList.add("hidden");
+
+            // Scroll to bottom of chat window
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // Display error message in chat window
+            displayMessage("Er is een fout opgetreden bij het verwerken van de vraag. Probeer het later opnieuw.", false);
+
+            // Enable submit button
+            submitBtn.disabled = false;
+
+            // Hide loading spinner
+            loadingDiv.classList.add("hidden");
+
+            // Scroll to bottom of chat window
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+
+    // Clear input field
+    document.getElementById("question").value = "";
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch('/anime/recommendation');
-    const data = await response.json();
-    const recommendation = data.recommendation;
-    appendMessage(recommendation, 'model');
-});
+function displayMessage(message, isUser) {
+    const chatContainer = document.getElementById("chat-container");
+    const messageDiv = document.createElement("div");
+    messageDiv.textContent = message;
+    messageDiv.classList.add("message");
+
+    if (isUser) {
+        messageDiv.classList.add("user-message");
+    }
+
+    chatContainer.appendChild(messageDiv);
+}
