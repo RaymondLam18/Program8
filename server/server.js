@@ -16,9 +16,11 @@ const model = new ChatOpenAI({
     azureOpenAIApiDeploymentName: process.env.ENGINE_NAME,
 });
 
+let chatHistory = []; // Initialize chat history array
+
 app.post("/chat", async (req, res) => {
     try {
-        const response = await animeRecommendation(req.body.prompt);
+        const response = await processChat(req.body.prompt);
         res.json(response.content);
     } catch (error) {
         console.error("Error processing chat query:", error);
@@ -26,14 +28,20 @@ app.post("/chat", async (req, res) => {
     }
 });
 
-async function animeRecommendation(prompt) {
-    return await model.invoke([
-        ["system", 'You are an anime expert.'],
-        ["human", prompt]
-    ], {
+async function processChat(prompt) {
+    // Add user prompt to chat history
+    chatHistory.push(["human", prompt]);
+
+    // Invoke the model with chat history
+    const response = await model.invoke(chatHistory, {
         temperature: 0.0,
         maxTokens: 100,
     });
+
+    // Add AI response to chat history
+    chatHistory.push(["ai", response.content]);
+
+    return response;
 }
 
 app.listen(port, () => {
