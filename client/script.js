@@ -1,3 +1,6 @@
+// Haal chatgeschiedenis op uit localStorage als het bestaat, anders initialiseer een lege array
+let chatHistory = JSON.parse(localStorage.getItem("myChatHistory")) || [];
+
 function askQuestion() {
     const question = document.getElementById("question").value;
     const chatContainer = document.getElementById("chat-container");
@@ -13,18 +16,24 @@ function askQuestion() {
     // Show loading spinner
     loadingDiv.classList.remove("hidden");
 
-    // Make POST request to server
+    // Make POST request to server with chat history
     fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ prompt: question })
+        body: JSON.stringify({ prompt: question, chatHistory: chatHistory })
     })
         .then(response => response.json())
         .then(data => {
             // Display bot message in chat window
             displayMessage(data, false);
+
+            // Add bot message to chat history
+            chatHistory.push(["ai", data]);
+
+            // Save updated chat history to localStorage
+            localStorage.setItem("myChatHistory", JSON.stringify(chatHistory));
 
             // Enable submit button
             submitBtn.disabled = false;
