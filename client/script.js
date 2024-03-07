@@ -15,6 +15,9 @@ function askQuestion() {
     // Disable Enter key press
     questionInput.removeEventListener("keypress", handleEnterKeyPress);
 
+    // Disable input field while waiting for response
+    questionInput.disabled = true;
+
     // Display user message in chat window
     displayMessage(question, true);
 
@@ -64,6 +67,9 @@ function askQuestion() {
             // Enable Enter key press
             questionInput.addEventListener("keypress", handleEnterKeyPress);
 
+            // Enable input field after response received
+            questionInput.disabled = false;
+
             // Hide loading spinner
             loadingDiv.classList.add("hidden");
 
@@ -85,8 +91,10 @@ function displayMessage(message, isUser) {
         messageDiv.classList.add("user-message");
     }
 
-    chatContainer.appendChild(messageDiv);
+    // Voeg het bericht toe aan het begin van de chatcontainer
+    chatContainer.prepend(messageDiv);
 }
+
 
 function handleEnterKeyPress(event) {
     if (event.key === "Enter") {

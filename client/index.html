@@ -8,13 +8,16 @@
 </head>
 <body>
 <div class="container">
-    <div id="chat-window">
-        <div id="chat-container"></div>
+    <h1 class="title">Anime Chat Recommender</h1>
+    <div class="input-container">
+        <input type="text" id="question" placeholder="Stel hier je vraag...">
+        <button id="submit-btn" onclick="askQuestion()">Verzenden</button>
     </div>
-    <input type="text" id="question" placeholder="Stel hier je vraag...">
-    <button id="submit-btn" onclick="askQuestion()">Verzenden</button>
     <div id="loading" class="hidden">
         <div class="spinner"></div>
+    </div>
+    <div id="chat-window">
+        <div id="chat-container"></div>
     </div>
 </div>
 <script src="script.js"></script>
