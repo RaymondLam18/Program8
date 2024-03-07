@@ -18,9 +18,7 @@ const model = new ChatOpenAI({
 });
 
 // Initialize chat history
-let chatHistory = [
-    ["system", "You are an anime expert."],
-];
+let chatHistory = [];
 
 app.post("/chat", async (req, res) => {
     try {
@@ -34,43 +32,27 @@ app.post("/chat", async (req, res) => {
 });
 
 async function processChat(prompt) {
-    if (prompt.toLowerCase().includes("anime")) {
-        return await handleAnimeQuestion(prompt);
-    } else {
-        return await defaultChat(prompt);
-    }
-}
-
-async function handleAnimeQuestion(prompt) {
-    const messages = [...chatHistory, ["human", prompt]];
+    const messages = [...chatHistory, ["system", "You are an anime expert."], ["human", prompt]];
     const response = await model.invoke(messages, {
         temperature: 0.0,
         maxTokens: 100,
     });
+
+    chatHistory.push(["system", response.content]);
 
     try {
-        const animeResponse = await fetch("https://api.jikan.moe/v4/anime");
-        const animeData = await animeResponse.json();
-
-        const recommendations = animeData.data.slice(0, 5).map(anime => anime.title);
-
-        chatHistory.push(["ai", response.content]);
-        return { content: response.content + "\n\nHier zijn enkele aanbevolen anime: " + recommendations.join(", ") };
+        if (prompt.toLowerCase().includes("anime")) {
+            const animeResponse = await fetch("https://api.jikan.moe/v4/anime");
+            const animeData = await animeResponse.json();
+            const recommendations = animeData.data.slice(0, 5).map(anime => anime.title);
+            return { content: response.content + "\n\nHier zijn enkele aanbevolen anime: " + recommendations.join(", ") };
+        } else {
+            return { content: response.content };
+        }
     } catch (error) {
-        console.error("Error fetching anime data:", error);
-        return { content: response.content + "\n\nEr is een fout opgetreden bij het ophalen van anime-aanbevelingen." };
+        console.error("Error processing chat query:", error);
+        return { content: "Er is een fout opgetreden bij het verwerken van de chatquery." };
     }
-}
-
-
-async function defaultChat(prompt) {
-    const messages = [...chatHistory, ["human", prompt]];
-    const response = await model.invoke(messages, {
-        temperature: 0.0,
-        maxTokens: 100,
-    });
-    chatHistory.push(["ai", response.content]);
-    return response;
 }
 
 app.listen(port, () => {

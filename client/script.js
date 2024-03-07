@@ -44,7 +44,7 @@ function askQuestion() {
             }
 
             // Add bot message to chat history
-            chatHistory.push(["ai", data]);
+            chatHistory.push(["system", data]);
 
             // Save updated chat history to localStorage
             localStorage.setItem("myChatHistory", JSON.stringify(chatHistory));
