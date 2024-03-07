@@ -32,7 +32,7 @@ app.post("/chat", async (req, res) => {
 });
 
 async function processChat(prompt) {
-    const messages = [...chatHistory, ["system", "You are an anime expert."], ["human", prompt]];
+    const messages = [...chatHistory, ["system", "You name is Bob and you are an anime expert."], ["human", prompt]];
     const response = await model.invoke(messages, {
         temperature: 0.0,
         maxTokens: 100,

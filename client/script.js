@@ -1,4 +1,3 @@
-// Haal chatgeschiedenis op uit localStorage als het bestaat, anders initialiseer een lege array
 let chatHistory = JSON.parse(localStorage.getItem("myChatHistory")) || [];
 
 function askQuestion() {
@@ -8,9 +7,13 @@ function askQuestion() {
     const chatContainer = document.getElementById("chat-container");
     const loadingDiv = document.getElementById("loading");
     const submitBtn = document.getElementById("submit-btn");
+    const questionInput = document.getElementById("question");
 
     // Disable submit button
     submitBtn.disabled = true;
+
+    // Disable Enter key press
+    questionInput.removeEventListener("keypress", handleEnterKeyPress);
 
     // Display user message in chat window
     displayMessage(question, true);
@@ -58,6 +61,9 @@ function askQuestion() {
             // Enable submit button
             submitBtn.disabled = false;
 
+            // Enable Enter key press
+            questionInput.addEventListener("keypress", handleEnterKeyPress);
+
             // Hide loading spinner
             loadingDiv.classList.add("hidden");
 
@@ -65,7 +71,7 @@ function askQuestion() {
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             // Clear input field
-            document.getElementById("question").value = "";
+            questionInput.value = "";
         });
 }
 
@@ -82,9 +88,12 @@ function displayMessage(message, isUser) {
     chatContainer.appendChild(messageDiv);
 }
 
-// Event listener to handle enter key press
-document.getElementById("question").addEventListener("keypress", function (event) {
+function handleEnterKeyPress(event) {
     if (event.key === "Enter") {
+        event.preventDefault(); // Prevent default Enter key action (form submission)
         askQuestion();
     }
-});
+}
+
+// Event listener to handle enter key press
+document.getElementById("question").addEventListener("keypress", handleEnterKeyPress);
