@@ -2,6 +2,7 @@ import express from "express";
 import cors from 'cors';
 import fetch from 'node-fetch';
 import { ChatOpenAI } from "@langchain/openai";
+// import { ChatAnthropic } from "@langchain/anthropic";
 
 const app = express();
 const port = 8000;
@@ -17,7 +18,12 @@ const model = new ChatOpenAI({
     azureOpenAIApiDeploymentName: process.env.ENGINE_NAME,
 });
 
-// Initialize chat history
+// const model = new ChatAnthropic({
+//     temperature: 0.0,
+//     apiKey: process.env.ANTHROPIC_API_KEY,
+// });
+
+
 let chatHistory = [];
 
 app.post("/chat", async (req, res) => {
