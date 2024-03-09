@@ -1,6 +1,6 @@
 // Importeer de nodige modules
 import express from "express"; // Express.js framework voor het bouwen van webapplicaties
-import cors from 'cors'; // Middleware voor het instellen van CORS headers
+import cors from 'cors'; // Middleware voor het instellen van CORS-headers
 import fetch from 'node-fetch'; // Voor het uitvoeren van HTTP-verzoeken vanuit Node.js
 import { ChatOpenAI } from "@langchain/openai"; // Importeer de ChatOpenAI klasse van het @langchain/openai pakket
 
@@ -10,7 +10,7 @@ const port = 8000; // De poort waarop de server draait
 
 // Middleware voor het inschakelen van CORS (Cross-Origin Resource Sharing)
 app.use(cors());
-// Middleware voor het parsen van JSON body's
+// Middleware voor het parsen van JSON-body's
 app.use(express.json());
 
 // Initialiseer het ChatOpenAI model met de juiste configuratie
