@@ -1,4 +1,4 @@
-instalatie: 
+installatie: 
 
 cd server
 
