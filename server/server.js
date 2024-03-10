@@ -51,22 +51,22 @@ async function processChat(prompt) {
             const animeResponse = await fetch("https://api.jikan.moe/v4/anime");
             const animeData = await animeResponse.json();
 
-            const randomIndices = [];
-            while (randomIndices.length < 5) {
+            const randomIndexes  = [];
+            while (randomIndexes .length < 5) {
                 const randomIndex = Math.floor(Math.random() * animeData.data.length);
-                if (!randomIndices.includes(randomIndex)) {
-                    randomIndices.push(randomIndex);
+                if (!randomIndexes .includes(randomIndex)) {
+                    randomIndexes .push(randomIndex);
                 }
             }
 
-            const recommendations = randomIndices.map(index => animeData.data[index].title);
+            const recommendations = randomIndexes .map(index => animeData.data[index].title);
             return { content: "\n\nHere are some anime recommendations: " + recommendations.join(", ") };
         } else {
             return { content: response.content };
         }
     } catch (error) {
         console.error("Error processing chat query:", error);
-        return { content: "Er is een fout opgetreden bij het verwerken van de chatquery." };
+        return { content: "Er is een fout opgetreden bij het verwerken van de query." };
     }
 }
 
