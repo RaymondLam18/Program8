@@ -46,7 +46,6 @@ function askQuestion() {
         })
         .catch(error => {
             console.error("Error:", error);
-            displayMessage("Er is een fout opgetreden bij het verwerken van de vraag. Probeer het later opnieuw.", false);
         })
         .finally(() => {
             submitBtn.disabled = false;

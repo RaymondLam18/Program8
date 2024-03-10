@@ -38,7 +38,7 @@ app.post("/chat", async (req, res) => {
 });
 
 async function processChat(prompt) {
-    const messages = [...chatHistory, ["system", "You name is Bob and you are an anime expert."], ["human", prompt]];
+    const messages = [...chatHistory, ["system", "Your name is Bob and you are an anime expert."], ["human", prompt]];
     const response = await model.invoke(messages, {
         temperature: 0.0,
         maxTokens: 100,
@@ -50,8 +50,17 @@ async function processChat(prompt) {
         if (prompt.toLowerCase().includes("anime")) {
             const animeResponse = await fetch("https://api.jikan.moe/v4/anime");
             const animeData = await animeResponse.json();
-            const recommendations = animeData.data.slice(0, 5).map(anime => anime.title);
-            return { content: response.content + "\n\nHier zijn enkele aanbevolen anime: " + recommendations.join(", ") };
+
+            const randomIndices = [];
+            while (randomIndices.length < 5) {
+                const randomIndex = Math.floor(Math.random() * animeData.data.length);
+                if (!randomIndices.includes(randomIndex)) {
+                    randomIndices.push(randomIndex);
+                }
+            }
+
+            const recommendations = randomIndices.map(index => animeData.data[index].title);
+            return { content: "\n\nHere are some anime recommendations: " + recommendations.join(", ") };
         } else {
             return { content: response.content };
         }
@@ -60,6 +69,7 @@ async function processChat(prompt) {
         return { content: "Er is een fout opgetreden bij het verwerken van de chatquery." };
     }
 }
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
