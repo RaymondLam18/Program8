@@ -70,7 +70,6 @@ async function processChat(prompt) {
     }
 }
 
-
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
